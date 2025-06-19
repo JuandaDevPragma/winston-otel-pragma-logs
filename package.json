@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "description": "OTEL - Winston implementation tracing for aws node lambdas",
-  "author": "juan@pragma.com.co",
+  "author": "juan.ojeda@pragma.com.co",
   "exports": {
     ".": {
       "import": "./dist/esm/index.js",
