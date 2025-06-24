@@ -3,26 +3,35 @@ import {Resource} from '@opentelemetry/resources';
 import {ATTR_SERVICE_NAME} from '@opentelemetry/semantic-conventions';
 import {OTLPTraceExporter} from '@opentelemetry/exporter-trace-otlp-http';
 import {AwsLambdaInstrumentation} from '@opentelemetry/instrumentation-aws-lambda';
-import {getNodeAutoInstrumentations} from '@opentelemetry/auto-instrumentations-node';
 import {trace} from '@opentelemetry/api';
 
+let sdk: NodeSDK | null = null;
 
-const traceExporter = process.env.OTEL_EXPORTER_OTLP_ENDPOINT
-    ? new OTLPTraceExporter({url: process.env.OTEL_EXPORTER_OTLP_ENDPOINT})
-    : undefined;
+const initializeSDK = () => {
+    if (sdk) return sdk;
+    
+    const traceExporter = process.env.OTEL_EXPORTER_OTLP_ENDPOINT
+        ? new OTLPTraceExporter({url: process.env.OTEL_EXPORTER_OTLP_ENDPOINT})
+        : undefined;
 
-const sdk = new NodeSDK({
-    resource: new Resource({
-        [ATTR_SERVICE_NAME]: process.env.OTEL_SERVICE_NAME || 'default-lambda',
-    }),
-    instrumentations: [
-        new AwsLambdaInstrumentation(),
-        getNodeAutoInstrumentations()
-    ],
-    traceExporter: traceExporter
-});
+    sdk = new NodeSDK({
+        resource: new Resource({
+            [ATTR_SERVICE_NAME]: process.env.OTEL_SERVICE_NAME || 'default-lambda',
+        }),
+        instrumentations: [
+            new AwsLambdaInstrumentation()
+        ],
+        traceExporter: traceExporter
+    });
 
-sdk.start();
+    sdk.start();
+    return sdk;
+};
+
+// Initialize only when needed
+if (process.env.NODE_ENV !== 'test') {
+    initializeSDK();
+}
 
 export const tracer = trace.getTracer('default-tracer');
 
@@ -42,7 +51,9 @@ export const getCurrentTrace = () => {
 };
 
 process.on('SIGTERM', () => {
-    sdk.shutdown().then();
+    if (sdk) {
+        sdk.shutdown().then();
+    }
 });
 
 

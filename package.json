@@ -1,6 +1,6 @@
 {
   "name": "winston-otel-pragma-logs",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "type": "commonjs",
   "description": "OTEL - Winston implementation tracing for aws node lambdas",
   "author": "juan.ojeda@pragma.com.co",
