@@ -13,20 +13,22 @@ export const logger = winston.createLogger({
             const { traceId, spanId } = getCurrentTrace();
 
             const payload: any = obj.action;
-            const transaction_id = obj.transaction_id;
+            const error: any = obj.error;
+            const transactionId = obj.transactionId;
 
             const log = {
                 timestamp,
                 severity: level,
-                transaction_id: transaction_id ?? 'Id Not Available',
+                transactionId: transactionId ?? 'Id Not Available',
                 message,
-                app_name: process.env.OTEL_SERVICE_NAME,
-                app_namespace: process.env.OTEL_SERVICE_NAMESPACE ?? 'namespaceTest',
+                appName: process.env.OTEL_SERVICE_NAME,
+                appNamespace: process.env.OTEL_SERVICE_NAMESPACE ?? 'namespaceTest',
                 tracing: {
                     traceId,
                     spanId
                 },
-                action: payload
+                action: payload,
+                error: error
             };
 
             return JSON.stringify(log);

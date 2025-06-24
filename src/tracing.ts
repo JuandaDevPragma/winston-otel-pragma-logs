@@ -28,10 +28,8 @@ const initializeSDK = () => {
     return sdk;
 };
 
-// Initialize only when needed
-if (process.env.NODE_ENV !== 'test') {
-    initializeSDK();
-}
+// Initialize SDK
+initializeSDK();
 
 export const tracer = trace.getTracer('default-tracer');
 
