@@ -20,6 +20,8 @@ export const logger = winston.createLogger({
                 severity: level,
                 transaction_id: transaction_id ?? 'Id Not Available',
                 message,
+                app_name: process.env.OTEL_SERVICE_NAME,
+                app_namespace: process.env.OTEL_SERVICE_NAMESPACE ?? 'namespaceTest',
                 tracing: {
                     traceId,
                     spanId
